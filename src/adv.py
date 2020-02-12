@@ -1,4 +1,5 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
 
@@ -38,14 +39,52 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+p = Player("Player 1", room["outside"])
 
 # Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
+
+while True:
+    #
+    # * Prints the current room name
+    print(f"\n{p.current_room.name}")
+
+    # * Prints the current description (the textwrap module might be useful here).
+    print(p.current_room.description, "\n")
+
+    # * Waits for user input and decides what to do.
+    cmd = input("Choose a direction to travel: n, s, e, or w (q to quit)\n")
+    #
+    # If the user enters a cardinal direction, attempt to move to the room there.
+    # Print an error message if the movement isn't allowed.
+    if cmd == 'n':
+        if p.current_room.n_to == None:
+            print(
+                "\nThere is no path here. Please choose another direction: n, s, e, or w (q to quit)")
+        else:
+            p.current_room = p.current_room.n_to
+
+    elif cmd == 's':
+        if p.current_room.s_to == None:
+            print(
+                "\nThere is no path here. Please choose another direction: n, s, e, or w (q to quit)")
+        else:
+            p.current_room = p.current_room.s_to
+
+    elif cmd == 'e':
+        if p.current_room.e_to == None:
+            print(
+                "\nThere is no path here. Please choose another direction: n, s, e, or w (q to quit)")
+        else:
+            p.current_room = p.current_room.e_to
+
+    elif cmd == 'w':
+        if p.current_room.w_to == None:
+            print(
+                "\nThere is no path here. Please choose another direction: n, s, e, or w (q to quit)")
+        else:
+            p.current_room = p.current_room.w_to
+
+    # If the user enters "q", quit the game.
+    elif cmd == 'q':
+        print("\nGoodbye.")
+        break
