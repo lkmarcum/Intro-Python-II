@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -22,6 +23,10 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
+items = {
+    'coin': Item("coin")
+}
+
 
 # Link rooms together
 
@@ -33,6 +38,8 @@ room['overlook'].s_to = room['foyer']
 room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
+
+room['foyer'].items.append(items['coin'])
 
 #
 # Main
@@ -55,17 +62,41 @@ while True:
     # print(p.current_room.description, "\n")
 
     # * Waits for user input and decides what to do.
-    cmd = input("Choose a direction to travel: n, s, e, or w (q to quit)\n")
+    cmd = input("Enter a command.\n").split()
+
     #
     # If the user enters a cardinal direction, attempt to move to the room there.
     # Print an error message if the movement isn't allowed.
-    if cmd in choices:
-        p.travel(cmd)
-    elif cmd == 'q':
-        print("\nGoodbye.")
-        break
+    if len(cmd) == 1:
+        if cmd[0] in choices:
+            p.travel(cmd[0])
+        elif cmd[0] == 'i' or cmd[0] == "inventory":
+            print("Inventory:")
+            for i in p.items:
+                print(i.name)
+        elif cmd[0] == 'q':
+            print("\nGoodbye.")
+            break
+        else:
+            print("Command not recognized.")
+    elif len(cmd) == 2:
+        if cmd[0] == "get" or cmd[0] == "take":
+            if cmd[1] in items.keys() and items[cmd[1]] in p.current_room.items:
+                items[cmd[1]].on_take()
+                p.current_room.items.remove(items[cmd[1]])
+                p.items.append(items[cmd[1]])
+            else:
+                print(f"There is no {cmd[1]} in this room.")
+        elif cmd[0] == "drop":
+            if items[cmd[1]] in p.items:
+                items[cmd[1]].on_drop()
+                p.current_room.items.append(items[cmd[1]])
+                p.items.remove(items[cmd[1]])
+        else:
+            print("Command not recognized.")
     else:
         print("Command not recognized.")
+
     # if cmd == 'n':
     #     if p.current_room.n_to == None:
     #         print(
